@@ -1,0 +1,4 @@
+(executable
+ (public_name experiments-in-ocaml)
+ (name main)
+ (libraries experiments_in_ocaml))
