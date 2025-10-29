@@ -5,11 +5,11 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github david2am/lab))
 
-(authors "Author Name <author@example.com>")
+(authors "David")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
+(maintainers "David")
 
 (license LICENSE)
 
@@ -17,10 +17,11 @@
 
 (package
  (name experiments-in-ocaml)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "This is a set of OCaml experiments")
+ (description
+  "\n  I'll put here exercises from different sources\n  to learn concepts and language features\n ")
  (depends ocaml)
  (tags
-  ("add topics" "to describe" your project)))
+  ("OCaml" "tutorials" your project)))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
