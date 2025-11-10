@@ -1,0 +1,26 @@
+(lang dune 3.20)
+
+(name projects-calc-trade-tax)
+
+(generate_opam_files true)
+
+(source
+ (github david2am/lab))
+
+(authors "David <author@example.com>")
+
+(maintainers "David <maintainer@example.com>")
+
+(license LICENSE)
+
+(documentation https://url/to/documentation)
+
+(package
+ (name projects-calc-trade-tax)
+ (synopsis "Demo to calculate trade taxes")
+ (description "Demo project in OCaml to calculate taxes in a trade")
+ (depends ocaml)
+ (tags
+  ("ocaml" "demo" "calc trade tax" "project")))
+
+; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html

@@ -1,0 +1,4 @@
+(executable
+ (public_name projects-calc-trade-tax)
+ (name main)
+ (libraries projects_calc_trade_tax))
