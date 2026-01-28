@@ -10,7 +10,7 @@ Are exercises from different sources toward a common topic, by their nature they
 
 ## Projects
 
-Are small demos, they shouldn't be practical but a proof consolidated of knowledge.
+Are small demos, they shouldn't be practical but a proof of consolidated knowledge.
 
 ## Deliverables
 
