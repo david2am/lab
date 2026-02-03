@@ -22,7 +22,27 @@ let approx_pi () =
   let pi = 4.0 *. float !p /. float n in
   Printf.printf "%f\n" pi
 
+let sieve () =
+  let max = read_int () in
+  let prime = Array.make (max + 1) true in
 
-(* page 35 *)
+  prime.(0) <- false;
+  prime.(1) <- false;
 
-let experiment () = ()
+  let limit = int_of_float @@ sqrt @@ float max in
+
+  for n = 2 to limit do
+    if prime.(n) then
+      let m = ref (n * n) in
+
+      while !m < max + 1 do
+        prime.(!m) <- false;
+        m := !m + n
+      done
+  done;
+
+  for n = 2 to max do
+    if prime.(n) then Printf.printf "%d\n" n
+  done
+
+(* page 47 *)

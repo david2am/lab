@@ -1,3 +1,3 @@
 open Experiments
 
-let () = print_endline "hola"
+let () = sieve ()
