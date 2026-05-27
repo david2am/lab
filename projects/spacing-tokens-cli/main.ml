@@ -87,9 +87,11 @@ let mapping_pattern =
 (* ---------- Command-line arguments ---------- *)
 
 let filename = ref ""
+let write    = ref false
 
 let rules = [
   ("-f", Arg.Set_string filename, " file to read");
+  ("-w", Arg.Set write, " write changes back to the file");
 ]
 
 let usage =  "usage: some -f <filename>"
@@ -119,30 +121,49 @@ let process_line line line_num =
         Printf.printf "Line %d:\n" line_num;
         print_endline ("- " ^ line);
         print_endline ("+ " ^ updated_line)
-      end
-  end
+      end;
+      updated_line
+  end else
+    line
 
 (* ---------- File processing ---------- *)
 
 let scan_channel ic =
   print_string "\n";
-  let rec loop line_num =
+  let rec loop acc line_num =
     match In_channel.input_line ic with
     | Some line ->
-      process_line line line_num;
-      loop (line_num + 1)
-    | None -> () (* End of file reached smoothly *)        
+      let new_line = process_line line line_num in
+      loop (new_line :: acc) (line_num + 1)
+    | None -> List.rev acc (* End of file reached smoothly *)        
   in
-    loop 1
+    loop [] 1
 
+let write_file path lines =
+  let tmp = path ^ ".tmp" in
+  Out_channel.with_open_text tmp (fun oc ->
+    List.iter (fun l ->
+      Out_channel.output_string oc l;
+      Out_channel.output_char oc '\n'
+    ) lines
+  );
+  Sys.rename tmp path
 
 let scan_file path =
-  try
-    In_channel.with_open_text path scan_channel
-  with
-  | Sys_error msg ->
-     Printf.printf "Could not read file: %s\n" msg;
-     exit 1
+  let lines =
+    try
+      In_channel.with_open_text path scan_channel
+    with
+    | Sys_error msg ->
+       Printf.printf "Could not read file: %s\n" msg;
+       exit 1
+  in
+
+  if !write then begin
+    write_file path lines;
+    Printf.printf "\nWrote changes to %s\n" path
+  end else
+    print_endline "\n(Dry run _ pass -w to apply changes)"
 
 (* ---------- Entry point ---------- *)
 
