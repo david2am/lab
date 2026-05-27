@@ -84,7 +84,6 @@ let mapping_pattern =
   in
   Str.regexp (String.concat "\\|" (List.map wrap mapping))
 
-(* ---------- Helpers ---------- *)
 let is_inside_parens s pos =
   let rec scan i depth =
     if i < 0 then false
@@ -110,7 +109,7 @@ let usage =  "usage: some -f <filename>"
 
 (* ------- Keyword matching and replacement ------- *)
 
-let match_keyword line =
+let found_keyword line =
   List.exists (fun kw ->
     let pattern = Str.regexp_string_case_fold kw in    
     try
@@ -119,7 +118,7 @@ let match_keyword line =
     with Not_found -> false (* Skip quietly if not found *)
   ) keywords
 
-let update_content line =
+let update_line line =
   Str.global_substitute mapping_pattern (fun s ->
     let old_value = Str.matched_string s in
     let start = Str.match_beginning () in
@@ -131,8 +130,8 @@ let update_content line =
   ) line
 
 let process_line line line_num =
-  if match_keyword line then begin
-    let updated_line = update_content line in
+  if found_keyword line then begin
+    let updated_line = update_line line in
       if updated_line <> line then begin
         Printf.printf "Line %d:\n" line_num;
         print_endline ("- " ^ line);
@@ -144,7 +143,7 @@ let process_line line line_num =
 
 (* ---------- File processing ---------- *)
 
-let scan_channel ic =
+let read_file ic =
   print_string "\n";
   let rec loop acc line_num =
     match In_channel.input_line ic with
@@ -165,10 +164,10 @@ let write_file path lines =
   );
   Sys.rename tmp path
 
-let scan_file path =
+let process_file path =
   let lines =
     try
-      In_channel.with_open_text path scan_channel
+      In_channel.with_open_text path read_file
     with
     | Sys_error msg ->
        Printf.printf "Could not read file: %s\n" msg;
@@ -191,6 +190,6 @@ let () =
     exit 1
   );
 
-  scan_file !filename
+  process_file !filename
 
   
