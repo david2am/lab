@@ -84,6 +84,18 @@ let mapping_pattern =
   in
   Str.regexp (String.concat "\\|" (List.map wrap mapping))
 
+(* ---------- Helpers ---------- *)
+let is_inside_parens s pos =
+  let rec scan i depth =
+    if i < 0 then false
+    else match s.[i] with
+    | '(' when depth = 0 -> true
+    | '(' -> scan (i - 1) (depth - 1)
+    | ')' -> scan (i - 1) (depth + 1)
+    | _   -> scan (i - 1) depth
+  in
+  scan (pos - 1) 0
+
 (* ---------- Command-line arguments ---------- *)
 
 let filename = ref ""
@@ -108,10 +120,14 @@ let match_keyword line =
   ) keywords
 
 let update_content line =
-  Str.global_substitute mapping_pattern (fun matched_txt ->
-    let old_value = Str.matched_string matched_txt in
-    try List.assoc old_value mapping
-    with Not_found -> old_value
+  Str.global_substitute mapping_pattern (fun s ->
+    let old_value = Str.matched_string s in
+    let start = Str.match_beginning () in
+    if is_inside_parens s start then
+      old_value                              (* leave function args alone *)
+    else
+      try List.assoc old_value mapping
+      with Not_found -> old_value
   ) line
 
 let process_line line line_num =
