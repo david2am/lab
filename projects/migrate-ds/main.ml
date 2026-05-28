@@ -73,7 +73,10 @@ let mapping = [
 ]
 
 let mapping_pattern =
-  Str.regexp "\\$spacing-[0-9]+\\|\\b-?[0-9]+px\\b\\|\\b-?[0-9]+\\b"
+  (* 1. Matches $spacing tokens
+     2. Matches numbers cleanly ending in px (\b prevents matching pxx)
+     3. Matches standalone integers, making sure they aren't followed by a dot (decimal) or letters (units like em) *)
+  Str.regexp "\\$spacing-[0-9]+\\|\\b-?[0-9]+px\\b\\|\\b-?[0-9]+\\b\\([^.a-zA-Z%]\\|$\\)"
 
 let is_inside_parens s pos =
   let rec scan i depth =
