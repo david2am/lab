@@ -95,47 +95,43 @@ let is_inside_parens s pos =
   in
   scan (pos - 1) 0
 
-(* ---------- Command-line arguments ---------- *)
-
-let filename = ref ""
-let write    = ref false
-
-let rules = [
-  ("-f", Arg.Set_string filename, " file to read");
-  ("-w", Arg.Set write, " write changes back to the file");
-]
-
-let usage =  "usage: some -f <filename>"
-
 (* ------- Keyword matching and replacement ------- *)
 
-let found_keyword line =
-  List.exists (fun kw ->
-    let pattern = Str.regexp_string_case_fold kw in    
-    try
-      let _ = Str.search_forward pattern line 0 in
-      true
-    with Not_found -> false (* Skip quietly if not found *)
-  ) keywords
-
-let update_line line =
-  Str.global_substitute mapping_pattern (fun s ->
-    let old_value = Str.matched_string s in
-    let start = Str.match_beginning () in
-    if is_inside_parens s start then
-      old_value                              (* leave function args alone *)
-    else
-      try List.assoc old_value mapping
-      with Not_found -> old_value
-  ) line
-
 let process_line line line_num =
+
+  let found_keyword line =
+    List.exists (fun kw ->
+      let pattern = Str.regexp_string_case_fold kw in    
+      try
+        let _ = Str.search_forward pattern line 0 in
+        true
+      with Not_found -> false (* Skip quietly if not found *)
+    ) keywords
+  in
+
+  let update_line line =
+    Str.global_substitute mapping_pattern (fun s ->
+      let old_value = Str.matched_string s in
+      let start = Str.match_beginning () in
+      if is_inside_parens s start then
+        old_value                              (* leave function args alone *)
+      else
+        try List.assoc old_value mapping
+        with Not_found -> old_value
+    ) line
+  in
+    
   if found_keyword line then begin
     let updated_line = update_line line in
       if updated_line <> line then begin
-        Printf.printf "Line %d:\n" line_num;
+        Printf.printf "Line %d (+):\n" line_num;
         print_endline ("- " ^ line);
         print_endline ("+ " ^ updated_line)
+      end else begin
+        print_endline "................................................................................................";
+        Printf.printf "Line %d:\n" line_num;
+        print_endline ("o" ^ line);
+        print_endline "................................................................................................";
       end;
       updated_line
   end else
@@ -164,7 +160,7 @@ let write_file path lines =
   );
   Sys.rename tmp path
 
-let process_file path =
+let process_file path write =
   let lines =
     try
       In_channel.with_open_text path read_file
@@ -180,6 +176,20 @@ let process_file path =
   end else
     print_endline "\n(Dry run _ pass -w to apply changes)"
 
+(* ---------- Command-line arguments ---------- *)
+
+let filename = ref ""
+let write    = ref false
+let version = "0.1.0"
+
+let rules = [
+  ("-f", Arg.Set_string filename, " file to read");
+  ("-w", Arg.Set write, " write changes back to the file");
+  ("-v", Arg.Unit (fun () -> print_endline version; exit 0), " print version and exit");
+]
+
+let usage =  "usage: some -f <filename>"
+
 (* ---------- Entry point ---------- *)
 
 let () =
@@ -190,6 +200,6 @@ let () =
     exit 1
   );
 
-  process_file !filename
+  process_file !filename write
 
   
