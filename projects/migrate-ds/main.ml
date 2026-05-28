@@ -1,7 +1,7 @@
 (* ---------- Configuration ---------- *)
 
 let keywords = [
-  " margin: "; " padding: "; " top: "; " bottom: "; " right: "; " left: ";
+  "margin: "; "padding: "; " top: "; " bottom: "; " right: "; " left: ";
   "margin-top: "; "margin-bottom: "; "margin-right: "; "margin-left: ";
   "padding-top: "; "padding-bottom: "; "padding-right: "; "padding-left: ";
 ]
@@ -50,7 +50,7 @@ let mapping = [
   ("72", "$space-1800");
   ("80", "$space-2000");
   (* pixels *)
-  ("0px ", "$space-0");
+  ("0px", "$space-0");
   ("2px",  "$space-050");
   ("4px",  "$space-100");
   ("8px",  "$space-200");
@@ -72,17 +72,8 @@ let mapping = [
   ("80px", "$space-2000");
 ]
 
-(* let mapping_pattern = *)
-  (* Str.regexp "\\$spacing-[0-9]+\\|\\b-?[0-9]+px\\b\\|\\b-?[0-9]+\\b" *)
-
 let mapping_pattern =
-  let wrap (key, _) =
-    if String.length key > 0 && key.[0] = '$' then
-      Str.quote key
-    else
-      "\\b-?" ^ Str.quote key ^ "\\b"
-  in
-  Str.regexp (String.concat "\\|" (List.map wrap mapping))
+  Str.regexp "\\$spacing-[0-9]+\\|\\b-?[0-9]+px\\b\\|\\b-?[0-9]+\\b"
 
 let is_inside_parens s pos =
   let rec scan i depth =
