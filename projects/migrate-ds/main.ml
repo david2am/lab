@@ -27,9 +27,10 @@ let () =
     exit 1
   );
 
-
-  let file_list = Files.find_files !folderpath !ext in
-
-  List.iter (fun file ->
-    Files.process_file file !write
-  ) file_list
+  if !filename <> "" then
+    Files.process_file !filename !write
+  else
+    let file_list = Files.find_files !folderpath !ext in
+    List.iter (fun file ->
+      Files.process_file file !write
+    ) file_list  
