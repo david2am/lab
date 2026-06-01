@@ -1,12 +1,9 @@
-(* ---------- Configuration ---------- *)
-
 let keywords = [
   "margin: "; "padding: "; " top: "; " bottom: "; " right: "; " left: ";
   "margin-top: "; "margin-bottom: "; "margin-right: "; "margin-left: ";
   "padding-top: "; "padding-bottom: "; "padding-right: "; "padding-left: ";
 ]
 
-(* (old-value, new-value) *)
 let mapping = [
   (* tokens *)
   ("$spacing-2",  "$space-050");
@@ -73,4 +70,4 @@ let mapping = [
 ]
 
 let mapping_pattern =
-  Str.regexp "\\$spacing-[0-9]+\\|\\b-?[0-9]+px\\b\\|\\b-?[0-9]+\\b"
+  Str.regexp "\\$spacing-[0-9]+\\|\\b-?[0-9]+px\\b\\|\\b-?[0-9]+\\b" (* TODO: replace this *)

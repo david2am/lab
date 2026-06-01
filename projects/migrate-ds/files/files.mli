@@ -3,5 +3,5 @@ val process_file : string -> bool -> unit
 *)
 
 val find_files : string -> string -> string list
-(** [find_file dir ext] : Recursively find files in a [dir] with a given [extension]
+(** [find_file dir ext] : Recursively find files with a given [extension] in a given [dir]
 *)

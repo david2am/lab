@@ -1,4 +1,4 @@
 val process_line : string -> int -> string
-(** [process_line line line_number]
-    returns a transformed line if there is a keyword in it, otherwise returns the line as it is
+(** Updates a [line] of text when finds a keyword by replacing the keys from <mapping>
+    for its corresponding values. 
  *)
