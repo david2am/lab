@@ -2,4 +2,7 @@
 
 (package
  (name migrate-ds)
+ (depends
+  ocaml
+  (alcotest :with-test))
  (synopsis "Migrate Design System"))
