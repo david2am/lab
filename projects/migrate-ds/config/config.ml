@@ -70,4 +70,16 @@ let mapping = [
 ]
 
 let mapping_pattern =
-  Str.regexp "\\$spacing-[0-9]+\\|\\b-?[0-9]+px\\b\\|\\b-?[0-9]+\\b" (* TODO: replace this *)
+  let keys = List.map fst mapping in
+  let already_replaced = List.sort_uniq compare (List.map snd mapping) in
+
+  (* Sort longest-first so e.g. "$spacing-16" wins over "16" at the same position *)
+  let sort_longest_first lst =
+    List.sort (fun a b -> compare (String.length b) (String.length a)) lst
+  in
+
+  (* Ignore targets come first so the engine consumes them before trying keys *)
+  let all_terms = sort_longest_first already_replaced @ sort_longest_first keys in
+  let quoted = List.map Str.quote all_terms in
+  let pattern_string = String.concat "\\|" quoted in
+  Str.regexp pattern_string
