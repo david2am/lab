@@ -10,6 +10,16 @@ let is_inside_parens s pos =
   in
   scan (pos - 1) 0
 
+let is_followed_by_invalid_unit old_value s start =
+  let len = String.length old_value in
+  let line_len = String.length s in
+
+  if start + len < line_len then
+    let next_char = s.[start + len] in
+    next_char = '.' || (next_char >= 'a' && next_char <= 'z') || next_char = '%'
+  else
+    false
+
 let is_keyword_found line keywords =
   List.exists (fun kw ->
     let pattern = Str.regexp_string_case_fold kw in    
@@ -22,20 +32,9 @@ let is_keyword_found line keywords =
 let update_line line mapping mapping_pattern =
   Str.global_substitute mapping_pattern (fun s ->
     let old_value = Str.matched_string s in
-
     let start = Str.match_beginning () in
-    let len = String.length old_value in
-    let line_len = String.length s in
-  
-    let followed_by_invalid_unit =
-      if start + len < line_len then
-        let next_char = s.[start + len] in
-        next_char = '.' || (next_char >= 'a' && next_char <= 'z') || next_char = '%'
-      else
-        false
-    in
 
-    if followed_by_invalid_unit then
+    if is_followed_by_invalid_unit old_value s start then
       old_value (* Skip: it's a decimal fraction or an unsupported unit like em/rem *)
     else if is_inside_parens s start then
       old_value (* Skip: inside function parentheses *)
