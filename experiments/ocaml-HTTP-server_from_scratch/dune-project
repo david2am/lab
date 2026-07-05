@@ -1,0 +1,8 @@
+(lang dune 3.23)
+
+(package
+ (name http-server)
+ (depends
+  ocaml
+  (alcotest :with-test)j)
+ (synopsis "HTTP server from scratch"))
