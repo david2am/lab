@@ -1,0 +1,4 @@
+(executable
+ (name main)
+ (public_name http-server)
+ (libraries alcotest))
