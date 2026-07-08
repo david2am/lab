@@ -12,33 +12,33 @@ let rec get_lines (acc : Buffer.t) lines buffer ic =
     List.rev final_lines
   | n ->
     let sub_str = BytesLabels.sub_string buffer ~pos:0 ~len:n in
-    let index = String.index_opt sub_str '\n' in
 
-    match index with
-    | None ->
-      Buffer.add_substring acc sub_str 0 n;
-      get_lines acc lines buffer ic
-    | Some idx ->
-      let line =
-        Buffer.add_substring acc sub_str 0 idx;
-        Buffer.contents acc
-      in
-      Buffer.clear acc; (* reset for next line *)
+    let rec process_chunk current_lines start_pos =
+      match String.index_from_opt sub_str start_pos '\n' with
+      | None ->
+        Buffer.add_substring acc sub_str start_pos (n - start_pos);
+        current_lines
+      | Some idx ->
+        Buffer.add_substring acc sub_str start_pos (idx - start_pos);
+        let line = Buffer.contents acc in
+        Buffer.clear acc; (* reset for next line *)
 
-      Buffer.add_substring acc sub_str (idx + 1) (n - idx - 1);
+        process_chunk (line :: current_lines) (idx + 1)
+    in
 
-      get_lines acc (line::lines) buffer ic
+    let updated_lines = process_chunk lines 0 in
+    get_lines acc updated_lines buffer ic
 
 
 let read_file file =
-  let acc = Buffer.create 100 in
-  let buffer = Bytes.create 8 in
-
   try  Ok (
+    let acc = Buffer.create 100 in
+    let buffer = Bytes.create 8 in
     In_channel.with_open_bin file (get_lines acc [] buffer)
   )
   with Sys_error msg -> Error msg
 
+(* main function *)
 let () =
   match read_file "message.txt" with
   | Ok  lines -> List.iter (Printf.printf "read: %s\n") lines
