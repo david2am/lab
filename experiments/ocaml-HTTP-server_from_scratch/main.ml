@@ -34,8 +34,7 @@ let run_server () =
   let server_socket  = Unix.(socket PF_INET SOCK_STREAM 0) in
   let server_address = Unix.(ADDR_INET (inet_addr_loopback, 8080)) in
 
-  (* allow rebinding to this port even if a previous connection
-   is waiting TIME_WAIT from an earlier run *)
+  (* allow rebinding to this port ignoring TIME_WAIT from an earlier run *)
   Unix.(setsockopt server_socket SO_REUSEADDR true);
   Unix.bind server_socket server_address;
 
@@ -46,14 +45,23 @@ let run_server () =
     let (client_socket, client_address) = Unix.accept server_socket in
     Printf.printf "Client connected!\n%!";
 
-    let client_ic = Unix.in_channel_of_descr client_socket in
-    
-    let acc = Buffer.create 100 in
-    let buffer = Bytes.create 8 in
-    let lines = get_lines acc [] buffer client_ic in
-
-    List.iter (Printf.printf "read: %s\n%!") lines;
+    (try
+      let client_ic = Unix.in_channel_of_descr client_socket in
+      (try
+        let acc = Buffer.create 100 in
+        let buffer = Bytes.create 8 in
+        let lines = get_lines acc [] buffer client_ic in
+        List.iter (Printf.printf "read: %s\n%!") lines;
+      with e ->
+        (* guarantee the channel closes *)
+        close_in_noerr client_ic;
+        raise e
+      );
     close_in client_ic
+    with Unix.Unix_error (err, fn, _) ->
+      Printf.printf "Client error during %s: %s\n%!" fn (Unix.error_message err)
+    )
+
   done
 
 let () =
