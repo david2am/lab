@@ -34,6 +34,9 @@ let run_server () =
   let server_socket  = Unix.(socket PF_INET SOCK_STREAM 0) in
   let server_address = Unix.(ADDR_INET (inet_addr_loopback, 8080)) in
 
+  (* allow rebinding to this port even if a previous connection
+   is waiting TIME_WAIT from an earlier run *)
+  Unix.(setsockopt server_socket SO_REUSEADDR true);
   Unix.bind server_socket server_address;
 
   Unix.listen server_socket 10;
@@ -43,26 +46,15 @@ let run_server () =
     let (client_socket, client_address) = Unix.accept server_socket in
     Printf.printf "Client connected!\n%!";
 
-    let buffer = Bytes.create 1024 in
-    let bytes_read = UnixLabels.read client_socket ~buf:buffer ~pos:0 ~len:1024 in
-    let _ = UnixLabels.write client_socket ~buf:buffer ~pos:0 ~len:bytes_read in
+    let client_ic = Unix.in_channel_of_descr client_socket in
+    
+    let acc = Buffer.create 100 in
+    let buffer = Bytes.create 8 in
+    let lines = get_lines acc [] buffer client_ic in
 
-    Unix.close client_socket
+    List.iter (Printf.printf "read: %s\n%!") lines;
+    close_in client_ic
   done
-
-(* let read_file file = *)
-  (* try  Ok ( *)
-    (* let acc = Buffer.create 100 in *)
-    (* let buffer = Bytes.create 8 in *)
-    (* In_channel.with_open_bin file (get_lines acc [] buffer) *)
-  (* ) *)
-  (* with Sys_error msg -> Error msg *)
-
-(* main function *)
-(* let () = *)
-  (* match read_file "message.txt" with *)
-  (* | Ok  lines -> List.iter (Printf.printf "read: %s\n") lines *)
-  (* | Error msg -> Printf.eprintf "Error: %s\n" msg; exit 1 *)
 
 let () =
   run_server ()
