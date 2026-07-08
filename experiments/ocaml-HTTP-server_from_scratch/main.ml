@@ -30,16 +30,39 @@ let rec get_lines (acc : Buffer.t) lines buffer ic =
     get_lines acc updated_lines buffer ic
 
 
-let read_file file =
-  try  Ok (
-    let acc = Buffer.create 100 in
-    let buffer = Bytes.create 8 in
-    In_channel.with_open_bin file (get_lines acc [] buffer)
-  )
-  with Sys_error msg -> Error msg
+let run_server () =
+  let server_socket  = Unix.(socket PF_INET SOCK_STREAM 0) in
+  let server_address = Unix.(ADDR_INET (inet_addr_loopback, 8080)) in
+
+  Unix.bind server_socket server_address;
+
+  Unix.listen server_socket 10;
+  Printf.printf "Server is listening on port 8080...\n%!";
+  
+  while true do
+    let (client_socket, client_address) = Unix.accept server_socket in
+    Printf.printf "Client connected!\n%!";
+
+    let buffer = Bytes.create 1024 in
+    let bytes_read = UnixLabels.read client_socket ~buf:buffer ~pos:0 ~len:1024 in
+    let _ = UnixLabels.write client_socket ~buf:buffer ~pos:0 ~len:bytes_read in
+
+    Unix.close client_socket
+  done
+
+(* let read_file file = *)
+  (* try  Ok ( *)
+    (* let acc = Buffer.create 100 in *)
+    (* let buffer = Bytes.create 8 in *)
+    (* In_channel.with_open_bin file (get_lines acc [] buffer) *)
+  (* ) *)
+  (* with Sys_error msg -> Error msg *)
 
 (* main function *)
+(* let () = *)
+  (* match read_file "message.txt" with *)
+  (* | Ok  lines -> List.iter (Printf.printf "read: %s\n") lines *)
+  (* | Error msg -> Printf.eprintf "Error: %s\n" msg; exit 1 *)
+
 let () =
-  match read_file "message.txt" with
-  | Ok  lines -> List.iter (Printf.printf "read: %s\n") lines
-  | Error msg -> Printf.eprintf "Error: %s\n" msg; exit 1
+  run_server ()
