@@ -1,0 +1,10 @@
+Server is listening on port 8080...
+Client connected!
+read: POST /cofee HTTP/1.1
+read: Host: localhost:8080
+read: User-Agent: curl/8.4.0
+read: Accept: */*
+read: Content-Type: application/json
+read: Content-Length: 23
+read: 
+read: {"flavor":"dark mode" }
