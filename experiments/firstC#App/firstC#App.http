@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:5141
+
+GET {{baseUrl}}/
+
+###
+GET {{baseUrl}}/api/blogs
+
+###
+POST {{baseUrl}}/api/blogs
+Content-Type: application/json
+
+{
+  "id": 0,
+  "title": "My third blog",
+  "body": "This is my third blog"
+}
+
+###
+GET {{baseUrl}}/api/blogs/1
+
+###
+DELETE {{baseUrl}}/api/blogs/3
+
+###
+PUT {{baseUrl}}/api/blogs/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "title": "My modified blog",
+  "body": "This is my first modified blog" 
+}
