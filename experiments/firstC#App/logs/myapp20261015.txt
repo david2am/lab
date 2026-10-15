@@ -1,0 +1,25 @@
+2026-10-15 09:03:12.632 -05:00 [INF] Now listening on: http://localhost:5141
+2026-10-15 09:03:12.701 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-10-15 09:03:12.701 -05:00 [INF] Hosting environment: Development
+2026-10-15 09:03:12.701 -05:00 [INF] Content root path: /Users/daviddevargas/dev/lab/experiments/firstC#App
+2026-10-15 09:03:14.494 -05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5141/api/blogs - null null
+2026-10-15 09:03:14.510 -05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5141/api/blogs - 404 0 null 15.9458ms
+2026-10-15 09:03:14.511 -05:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5141/api/blogs, Response status code: 404
+2026-10-15 09:03:40.011 -05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5141/division - null null
+2026-10-15 09:03:40.012 -05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5141/division - 404 0 null 1.3785ms
+2026-10-15 09:03:40.012 -05:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5141/division, Response status code: 404
+2026-10-15 09:05:01.434 -05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5141/api/blogs - null null
+2026-10-15 09:05:01.436 -05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5141/api/blogs - 404 0 null 2.1071ms
+2026-10-15 09:05:01.436 -05:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5141/api/blogs, Response status code: 404
+2026-10-15 09:05:07.562 -05:00 [INF] Application is shutting down...
+2026-10-15 09:05:18.795 -05:00 [INF] Now listening on: http://localhost:5141
+2026-10-15 09:05:18.856 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-10-15 09:05:18.857 -05:00 [INF] Hosting environment: Development
+2026-10-15 09:05:18.857 -05:00 [INF] Content root path: /Users/daviddevargas/dev/lab/experiments/firstC#App
+2026-10-15 09:05:24.182 -05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5141/api/blogs - null null
+2026-10-15 09:05:24.195 -05:00 [INF] Executing endpoint 'BlogController.GetAll (firstC#App)'
+2026-10-15 09:05:24.203 -05:00 [INF] Route matched with {action = "GetAll", controller = "Blog"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.List`1[Blog]] GetAll() on controller BlogController (firstC#App).
+2026-10-15 09:05:24.205 -05:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[Blog, firstC#App, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-10-15 09:05:24.216 -05:00 [INF] Executed action BlogController.GetAll (firstC#App) in 11.9475ms
+2026-10-15 09:05:24.217 -05:00 [INF] Executed endpoint 'BlogController.GetAll (firstC#App)'
+2026-10-15 09:05:24.217 -05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5141/api/blogs - 200 null application/json; charset=utf-8 36.5989ms
