@@ -1,5 +1,5 @@
 using System.Text.Json;
-using System.Xml.Serialization;
+using System.Text.Json.Serialization;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +12,10 @@ builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IMyService, MyService>();
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-  options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.KebabCaseUpper;
-});
+// builder.Services.ConfigureHttpJsonOptions(options =>
+// {
+//   options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.KebabCaseUpper;
+// });
 
 var app = builder.Build();
 
@@ -44,8 +44,10 @@ app.Use(async (context, next) =>
 
 app.MapControllers();
 
-app.MapGet("/", () =>
+app.MapGet("/serialize", () =>
 {
+  var samplePerson = new Person { UserName = "Alice", UserAge = 30 }; 
+
   // var jsonString = JsonSerializer.Serialize(samplePerson);
   // return TypedResults.Text(jsonString, "application/json");
   // var options = new JsonSerializerOptions
@@ -66,6 +68,26 @@ app.MapGet("/", () =>
   // var xmlOutput = strinWriter.ToString();
 
   // return TypedResults.Text(xmlOutput, "application/xml");
+});
+
+// app.MapPost("/deserialize", (Person personFromClient) =>
+// {
+//   Console.WriteLine(personFromClient);
+//   return Results.Ok(personFromClient);
+// });
+
+app.MapPost("/deserialize", async (HttpContext context) =>
+{
+  // var person = await context.Request.ReadFromJsonAsync<Person>();
+  // return TypedResults.Json(person);
+
+  var options = new JsonSerializerOptions
+  {
+    UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow
+  };
+
+  var person = await context.Request.ReadFromJsonAsync<Person>(options);
+  return TypedResults.Json(person);
 });
 
 app.Run();
@@ -94,5 +116,5 @@ public class MyService: IMyService
 public class Person
 {
   required public string UserName { get; set; }
-  required public int UserAge { get; set; }
+  public int? UserAge { get; set; }
 }

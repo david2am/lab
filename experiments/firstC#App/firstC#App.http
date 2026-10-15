@@ -1,6 +1,23 @@
 @baseUrl = http://localhost:5141
 
 GET {{baseUrl}}/
+###
+GET {{baseUrl}}/serialize
+###
+POST {{baseUrl}}/deserialize
+Content-Type: application/json
+
+{
+  "userName": "David",
+  "userAge": 36
+}
+
+# Content-Type: application/xml
+
+# <Person>
+#   <UserName>Frank</UserName>
+#   <UserAge>50</UserAge>
+# </Person>
 
 ###
 GET {{baseUrl}}/api/blogs
