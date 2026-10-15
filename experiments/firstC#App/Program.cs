@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Xml.Serialization;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +12,14 @@ builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IMyService, MyService>();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+  options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.KebabCaseUpper;
+});
 
 var app = builder.Build();
+
+var samplePerson = new Person { UserName = "Alice", UserAge = 30 };
 
 app.Use(async (context, next) =>
 {
@@ -36,6 +44,30 @@ app.Use(async (context, next) =>
 
 app.MapControllers();
 
+app.MapGet("/", () =>
+{
+  // var jsonString = JsonSerializer.Serialize(samplePerson);
+  // return TypedResults.Text(jsonString, "application/json");
+  // var options = new JsonSerializerOptions
+
+  // {
+  //   PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+  // };
+  // var customJsonString = JsonSerializer.Serialize(samplePerson, options);
+  // return TypedResults.Text(customJsonString, "application/json");
+  
+//  return TypedResults.Json(samplePerson);
+
+  return samplePerson;
+
+  // var xmlSerializer = new XmlSerializer(typeof (Person)); 
+  // var strinWriter = new StringWriter();
+  // xmlSerializer.Serialize(strinWriter, samplePerson);
+  // var xmlOutput = strinWriter.ToString();
+
+  // return TypedResults.Text(xmlOutput, "application/xml");
+});
+
 app.Run();
 
 
@@ -57,4 +89,10 @@ public class MyService: IMyService
   {
     Console.WriteLine($"{message} - Service ID: {_serviceId}");
   }
+}
+
+public class Person
+{
+  required public string UserName { get; set; }
+  required public int UserAge { get; set; }
 }
