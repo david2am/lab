@@ -1,13 +1,14 @@
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddControllers();
+builder.Services.AddHttpLogging();
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-  await next.Invoke();
-});
+app.UseHttpLogging();
 
 app.MapControllers();
+
+app.MapGet("/", () => "Hello world");
 
 app.Run();
